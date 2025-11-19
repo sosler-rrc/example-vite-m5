@@ -8,6 +8,6 @@ export async function fetchGameTypes() {
   return await gameRepo.getGameTypes();
 }
 
-export async function deleteGame(gameId: string) {
-  return await gameRepo.deleteGame(gameId);
+export async function deleteGame(gameId: string, sessionToken: string) {
+  return await gameRepo.deleteGame(gameId, sessionToken);
 }

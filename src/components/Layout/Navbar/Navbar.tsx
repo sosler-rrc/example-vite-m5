@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { Button } from "../../ui/Button";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 
 export function Navbar() {
   return (
@@ -14,6 +15,12 @@ export function Navbar() {
           <Link to="/games">
             <Button>All Games</Button>
           </Link>
+          <SignedOut>
+            <SignInButton />
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </div>
       </nav>
     </header>

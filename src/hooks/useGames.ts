@@ -2,10 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import * as GameService from "../services/gameService";
 import { toast } from "react-toastify";
 import type { Game } from "../types/Game";
+import { useAuth } from "@clerk/clerk-react";
 
 export function useGames() {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(false);
+  const { getToken } = useAuth();
   const [error, setError] = useState<string | null>();
 
   const fetchGames = useCallback(async () => {
@@ -21,23 +23,27 @@ export function useGames() {
   }, []);
 
   const onDeleteGame = useCallback(async (gameId: string) => {
-    try {
-      const res = window.confirm("Are you sure you'd like to delete this game? This cannot be undone.");
+    const sessionToken = await getToken();
 
-      if (res) {
-        await GameService.deleteGame(gameId);
+    if (sessionToken) {
+      try {
+        const res = window.confirm("Are you sure you'd like to delete this game? This cannot be undone.");
 
-        setGames((prev) => prev.filter((r) => r.id !== gameId));
-        toast("Game has been deleted", {
-          position: "bottom-center",
-          theme: "light",
-          hideProgressBar: true,
-          closeButton: false,
-          autoClose: 2500,
-        });
+        if (res) {
+          await GameService.deleteGame(gameId, sessionToken);
+
+          setGames((prev) => prev.filter((r) => r.id !== gameId));
+          toast("Game has been deleted", {
+            position: "bottom-center",
+            theme: "light",
+            hideProgressBar: true,
+            closeButton: false,
+            autoClose: 2500,
+          });
+        }
+      } catch (errorObject) {
+        setError(`${errorObject}`);
       }
-    } catch (errorObject) {
-      setError(`${errorObject}`);
     }
   }, []);
 

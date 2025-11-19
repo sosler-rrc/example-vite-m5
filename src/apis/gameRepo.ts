@@ -6,7 +6,7 @@ import type { GameType } from "../types/GameType";
 const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api/v1`;
 
 export async function getGames() {
-  const gameResponse: Response = await fetch(`${BASE_URL}/games`);
+  const gameResponse: Response = await fetch(`${BASE_URL}/games`, {});
 
   if (!gameResponse.ok) {
     throw new Error("Failed to fetch games");
@@ -27,9 +27,12 @@ export async function getGameTypes() {
   return json.data;
 }
 
-export async function deleteGame(gameId: string) {
+export async function deleteGame(gameId: string, sessionToken: string) {
   const gameResponse: Response = await fetch(`${BASE_URL}/games/${gameId}`, {
     method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${sessionToken}`,
+    },
   });
 
   if (!gameResponse.ok) {
